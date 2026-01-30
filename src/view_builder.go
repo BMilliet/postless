@@ -5,6 +5,7 @@ type ViewBuilderInterface interface {
 	NewTextFieldView(title, placeHolder string) string
 	NewCollectionsView(collections []Collection, config *ConfigJSON, secret *SecretJSON, configLoader *ConfigLoader, fileManager FileManagerInterface) string
 	NewBodyEditorView(body interface{}) string
+	NewRequestPreviewView(selectedRequest *RequestItem, config *ConfigJSON, secret *SecretJSON, configLoader *ConfigLoader) string
 }
 
 type ViewBuilder struct{}
@@ -35,4 +36,10 @@ func (b *ViewBuilder) NewBodyEditorView(body interface{}) string {
 	selected := ""
 	BodyEditorView(body, &selected)
 	return selected
+}
+
+func (b *ViewBuilder) NewRequestPreviewView(selectedRequest *RequestItem, config *ConfigJSON, secret *SecretJSON, configLoader *ConfigLoader) string {
+	action := ""
+	RequestPreviewView(selectedRequest, config, secret, configLoader, &action)
+	return action
 }

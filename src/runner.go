@@ -131,22 +131,15 @@ func (r *Runner) Start() {
 
 	// Loop to allow body editing
 	for {
-		// Print request details
+		// Show request preview and get user action
 		clearScreen()
-		r.printRequestDetails(selectedRequest)
+		action := r.viewBuilder.NewRequestPreviewView(selectedRequest, r.config, r.secret, r.configLoader)
 
-		// Ask to execute or edit
-		fmt.Println(styles.Text("Press ENTER to execute, E to edit body, or Q/ESC to cancel", styles.FooterColor))
-		var input string
-		fmt.Scanln(&input)
-
-		input = strings.ToLower(strings.TrimSpace(input))
-
-		if input == "q" || input == "esc" {
+		if action == "cancel" {
 			return
 		}
 
-		if input == "e" {
+		if action == "edit" {
 			// Edit body
 			if selectedRequest.Request.Body == nil {
 				clearScreen()
@@ -231,8 +224,10 @@ func (r *Runner) Start() {
 			continue // Back to preview with updated values
 		}
 
-		// Default: execute request (ENTER or empty input)
-		break
+		// If action is "execute", break the loop
+		if action == "execute" {
+			break
+		}
 	}
 
 	// Clear screen after confirmation
