@@ -131,8 +131,6 @@ func (r *Runner) Start() {
 
 	// Loop to allow body editing
 	for {
-		// Show request preview and get user action
-		clearScreen()
 		action := r.viewBuilder.NewRequestPreviewView(selectedRequest, r.config, r.secret, r.configLoader)
 
 		if action == "cancel" {
@@ -142,7 +140,6 @@ func (r *Runner) Start() {
 		if action == "edit" {
 			// Edit body
 			if selectedRequest.Request.Body == nil {
-				clearScreen()
 				fmt.Println()
 				fmt.Println(styles.Text("⚠️  This request has no body to edit", styles.ErrorColor))
 				fmt.Println()
@@ -151,7 +148,6 @@ func (r *Runner) Start() {
 				continue
 			}
 
-			clearScreen()
 			result := r.viewBuilder.NewBodyEditorView(selectedRequest.Request.Body)
 
 			if result == ExitSignal {
@@ -197,7 +193,6 @@ func (r *Runner) Start() {
 				// Save changes to file
 				err := r.fileManager.SaveRequestJSON(selectedRequest.FilePath, selectedRequest.Request)
 				if err != nil {
-					clearScreen()
 					fmt.Println()
 					fmt.Println(styles.Text(fmt.Sprintf("⚠️  Failed to save changes: %v", err), styles.ErrorColor))
 					fmt.Println()
@@ -225,9 +220,6 @@ func (r *Runner) Start() {
 		}
 	}
 
-	// Clear screen after confirmation
-	clearScreen()
-
 	// Execute request
 	fmt.Println()
 	fmt.Println(styles.Text("⏳ Executing request...", styles.ThistleColor))
@@ -237,7 +229,6 @@ func (r *Runner) Start() {
 	response, _ := httpClient.ExecuteRequest(selectedRequest.Request)
 
 	// Clear the "executing" message and print response
-	clearScreen()
 	r.printResponse(response, selectedRequest.Name)
 }
 
@@ -256,12 +247,6 @@ func (r *Runner) getMethodColor(method string, styles *Styles) lipgloss.Color {
 	default:
 		return styles.MutedTitleColor
 	}
-}
-
-// clearScreen clears the terminal screen
-func clearScreen() {
-	// ANSI escape code to clear screen and move cursor to top-left
-	fmt.Print("\033[2J\033[H")
 }
 
 func (r *Runner) handleSettings(settingKey string) {
