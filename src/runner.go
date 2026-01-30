@@ -276,7 +276,13 @@ func (r *Runner) handleSettings(settingKey string) {
 		prompt = fmt.Sprintf("Current Base URL: %s\nEnter new Base URL (or press ESC to cancel):", currentValue)
 	case "jwt":
 		currentValue = r.configLoader.GetJWT(r.secret)
-		prompt = fmt.Sprintf("Current JWT: %s\nEnter new JWT token (or press ESC to cancel):", currentValue)
+		if currentValue != "" {
+			prompt = fmt.Sprintf("Current JWT: %s...\nEnter new JWT token (field starts empty, paste new token):", currentValue[:20])
+		} else {
+			prompt = "Enter JWT token (or press ESC to cancel):"
+		}
+		// For JWT, start with empty field (easier to paste new token)
+		currentValue = ""
 	case "timeout":
 		currentValue = fmt.Sprintf("%d", r.config.GetTimeout())
 		prompt = fmt.Sprintf("Current Timeout: %s seconds\nEnter new timeout in seconds (or press ESC to cancel):", currentValue)

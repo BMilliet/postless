@@ -188,7 +188,7 @@ func (m BodyEditorViewModel) View() string {
 		// Render visible items
 		for i := start; i < end; i++ {
 			field := m.bodyFields[i]
-			
+
 			cursor := "  "
 			if i == m.cursor {
 				cursor = "► "
