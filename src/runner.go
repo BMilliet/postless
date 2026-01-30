@@ -155,48 +155,43 @@ func (r *Runner) Start() {
 			result := r.viewBuilder.NewBodyEditorView(selectedRequest.Request.Body)
 
 			if result == ExitSignal {
-				continue // Back to preview
+				continue // Back to preview (user pressed Q)
 			}
 
-			// Parse result: "key|value"
-			parts := strings.Split(result, "|")
-			if len(parts) != 2 {
+			// Parse result: "key1|value1||key2|value2||..."
+			if result == "" {
 				continue
 			}
 
-			fieldKey := parts[0]
-			oldValue := parts[1]
-
-			// Get new value
-			clearScreen()
-			newValue := r.viewBuilder.NewTextFieldView(
-				fmt.Sprintf("Edit field: %s", fieldKey),
-				oldValue,
-			)
-
-			if newValue == ExitSignal || newValue == "" {
-				continue
-			}
-
-			// Update body
+			// Update all fields
+			fieldPairs := strings.Split(result, "||")
 			if bodyMap, ok := selectedRequest.Request.Body.(map[string]interface{}); ok {
-				// Try to parse as number
-				var parsedValue interface{}
-				var numValue float64
-				if _, err := fmt.Sscanf(newValue, "%f", &numValue); err == nil {
-					parsedValue = numValue
-				} else if newValue == "true" || newValue == "false" {
-					parsedValue = (newValue == "true")
-				} else {
-					parsedValue = newValue
+				for _, pair := range fieldPairs {
+					parts := strings.Split(pair, "|")
+					if len(parts) == 2 {
+						fieldKey := parts[0]
+						newValue := parts[1]
+
+						// Try to parse as number
+						var parsedValue interface{}
+						var numValue float64
+						if _, err := fmt.Sscanf(newValue, "%f", &numValue); err == nil {
+							parsedValue = numValue
+						} else if newValue == "true" || newValue == "false" {
+							parsedValue = (newValue == "true")
+						} else {
+							parsedValue = newValue
+						}
+
+						bodyMap[fieldKey] = parsedValue
+					}
 				}
 
-				// Create a NEW map to avoid any reference issues
+				// Create a NEW map to ensure no reference issues
 				newBodyMap := make(map[string]interface{})
 				for k, v := range bodyMap {
 					newBodyMap[k] = v
 				}
-				newBodyMap[fieldKey] = parsedValue
 				selectedRequest.Request.Body = newBodyMap
 
 				// Save changes to file
