@@ -3,6 +3,7 @@ package src
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -31,7 +32,7 @@ func (m TextInputViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 		case "enter":
-			*m.endValue = m.textInput.Value()
+			*m.endValue = strings.TrimSpace(m.textInput.Value())
 			m.quitting = true
 			return m, tea.Quit
 		}
@@ -59,8 +60,9 @@ func TextFieldView(title, placeHolder string, endValue *string) {
 
 	ti := textinput.New()
 	ti.Placeholder = placeHolder
+	ti.SetValue(placeHolder) // Set initial value
 	ti.Focus()
-	ti.CharLimit = 156
+	ti.CharLimit = 500 // Increase limit for long JWTs
 	ti.Width = 80
 
 	m := TextInputViewModel{

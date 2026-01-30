@@ -118,7 +118,7 @@ func (cl *ConfigLoader) GetJWT(secret *SecretJSON) string {
 	if secret == nil {
 		return ""
 	}
-	return secret.JWT
+	return strings.TrimSpace(secret.JWT)
 }
 
 func (cl *ConfigLoader) ReplaceVariables(text string, config *ConfigJSON) string {

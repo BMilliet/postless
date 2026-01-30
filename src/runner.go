@@ -306,7 +306,7 @@ func (r *Runner) handleSettings(settingKey string) {
 	case "baseUrl":
 		r.config.BaseUrl = newValue
 	case "jwt":
-		r.secret.JWT = newValue
+		r.secret.JWT = strings.TrimSpace(newValue)
 		// Save secret.json
 		secretJSON, err := ToJSON(r.secret)
 		if err != nil {
