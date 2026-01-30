@@ -93,12 +93,12 @@ func (cl *ConfigLoader) LoadSecretJSON() (*SecretJSON, error) {
 		if err != nil {
 			return nil, fmt.Errorf("LoadSecretJSON -> failed to create default: %v", err)
 		}
-		
+
 		err = cl.fileManager.WriteSecretContent(jsonContent)
 		if err != nil {
 			return nil, fmt.Errorf("LoadSecretJSON -> failed to write default: %v", err)
 		}
-		
+
 		return defaultSecret, nil
 	}
 
